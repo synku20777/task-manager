@@ -94,3 +94,6 @@ const AddTaskForm: React.FC<Props> = ({ onSave, task, onCancel }) => {
 };
 
 export default AddTaskForm;
+export const getCategoryArray = (categoryString: string): string[] => {
+  return categoryString.split(",").map((cat) => cat.trim());
+};
