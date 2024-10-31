@@ -17,7 +17,13 @@ const AddTaskForm: React.FC<Props> = ({ onSave, task, onCancel }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (title.trim() && deadline) {
-      onSave({ id: task?.id || Date.now(), title, description, deadline, priority });
+      onSave({
+        id: task?.id || Date.now(),
+        title,
+        description,
+        deadline,
+        priority,
+      });
     }
   };
 
@@ -43,13 +49,22 @@ const AddTaskForm: React.FC<Props> = ({ onSave, task, onCancel }) => {
           onChange={(e) => setDeadline(e.target.value)}
           required
         />
-        <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+        <label htmlFor="priority">Priority</label>
+        <select
+          id="priority"
+          value={priority}
+          onChange={(e) =>
+            setPriority(e.target.value as "low" | "medium" | "high")
+          }
+        >
           <option value="low">Low</option>
           <option value="medium">Medium</option>
           <option value="high">High</option>
         </select>
         <button type="submit">{task ? "Save Changes" : "Add Task"}</button>
-        <button type="button" onClick={onCancel}>Cancel</button>
+        <button type="button" onClick={onCancel}>
+          Cancel
+        </button>
       </form>
     </div>
   );
