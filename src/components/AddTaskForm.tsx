@@ -10,6 +10,7 @@ interface Props {
 
 const AddTaskForm: React.FC<Props> = ({ onSave, task, onCancel }) => {
   const [title, setTitle] = useState(task?.title || "");
+  const [category, setCategory] = useState<string[]>(task?.category || []);
   const [description, setDescription] = useState(task?.description || "");
   const [deadline, setDeadline] = useState(task?.deadline || "");
   const [priority, setPriority] = useState(task?.priority || "low");
@@ -20,6 +21,7 @@ const AddTaskForm: React.FC<Props> = ({ onSave, task, onCancel }) => {
       onSave({
         id: task?.id || Date.now(),
         title,
+        category,
         description,
         deadline,
         priority,
@@ -38,12 +40,33 @@ const AddTaskForm: React.FC<Props> = ({ onSave, task, onCancel }) => {
           onChange={(e) => setTitle(e.target.value)}
           required
         />
+        <div>
+          {category.map((cat, index) => (
+            <input
+              key={index}
+              type="text"
+              placeholder={`Category ${index + 1}`}
+              value={cat}
+              onChange={(e) => {
+                const newCategory = [...category];
+                newCategory[index] = e.target.value;
+                setCategory(newCategory);
+              }}
+              required
+            />
+          ))}
+          <button type="button" onClick={() => setCategory([...category, ""])}>
+            + Add Category
+          </button>
+        </div>
         <textarea
           placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+        <label htmlFor="deadline">Deadline</label>
         <input
+          id="deadline"
           type="date"
           value={deadline}
           onChange={(e) => setDeadline(e.target.value)}

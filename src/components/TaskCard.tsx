@@ -15,8 +15,17 @@ const priorityColors = {
 };
 
 const TaskCard: React.FC<Props> = ({ task, onEdit, onDelete }) => (
-  <div className="task-card" style={{ borderLeftColor: priorityColors[task.priority] }}>
-    <h4>{task.title}</h4>
+  <div
+    className="task-card"
+    style={{ borderLeftColor: priorityColors[task.priority] }}
+  >
+    <h2>{task.title}</h2>
+    {task.category.map((category, index) => (
+      <div key={index} className="category">
+        <h4>{category} </h4>
+      </div>
+    ))}
+    <br />
     <span className="priority">{task.priority.toUpperCase()}</span>
     <p>{task.description}</p>
     <span className="deadline">Due: {task.deadline}</span>
