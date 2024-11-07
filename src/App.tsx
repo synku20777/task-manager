@@ -10,8 +10,8 @@ const App: React.FC = () => {
   const [showAddTask, setShowAddTask] = useState(false);
   const [editTaskId, setEditTaskId] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [filter, setFilter] = useState<string>("all");
+  const [sortDate, setSortDate] = useState<"asc" | "desc">("asc");
+  const [sortPriority, setsortPriority] = useState<"asc" | "desc">("asc");
 
   const handleAddTask = (newTask: Task) => {
     setTasks([...tasks, { ...newTask, id: Date.now() }]);
@@ -38,11 +38,20 @@ const App: React.FC = () => {
     setSelectedCategory(event.target.value);
   };
 
-  const sortTasks = (tasks: Task[], sortOrder: "asc" | "desc") => {
+  const sortTasksByPriority = (tasks: Task[], sortPriority: "asc" | "desc") => {
+    const priorityOrder = { low: 1, medium: 2, high: 3 };
+    return tasks.sort((a, b) => {
+      return sortPriority === "asc"
+        ? priorityOrder[a.priority] - priorityOrder[b.priority]
+        : priorityOrder[b.priority] - priorityOrder[a.priority];
+    });
+  };
+
+  const sortTasksByDeadline = (tasks: Task[], sortDate: "asc" | "desc") => {
     return tasks.sort((a, b) => {
       const dateA = new Date(a.deadline);
       const dateB = new Date(b.deadline);
-      return sortOrder === "asc"
+      return sortDate === "asc"
         ? dateA.getTime() - dateB.getTime()
         : dateB.getTime() - dateA.getTime();
     });
@@ -89,28 +98,40 @@ const App: React.FC = () => {
       <div className="sort">
         <button
           className="sort-button"
-          onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+          onClick={() =>
+            setsortPriority(sortPriority === "asc" ? "desc" : "asc")
+          }
         >
-          {sortOrder === "asc" ? "Deadline Descending" : "Deadline Ascending"}
+          {sortPriority === "asc"
+            ? "Priority Descending"
+            : "Priority Ascending"}
         </button>
-      </div>
+        <button
+          className="sort-button"
+          onClick={() => setSortDate(sortDate === "asc" ? "desc" : "asc")}
+        >
+          {sortDate === "asc" ? "Deadline Descending" : "Deadline Ascending"}
+        </button>
 
-      <div className={`task-list ${showAddTask ? "blurred" : ""}`}>
-        {sortTasks(filteredTasks, sortOrder).map((task) => (
-          <TaskCard
-            key={task.id}
-            task={task}
-            onEdit={() => {
-              setEditTaskId(task.id);
-              setShowAddTask(true);
-            }}
-            onDelete={handleDeleteTask}
-          />
-        ))}
+        <div className={`task-list ${showAddTask ? "blurred" : ""}`}>
+          {sortTasksByDeadline(
+            sortTasksByPriority(filteredTasks, sortPriority),
+            sortDate
+          ).map((task) => (
+            <TaskCard
+              key={task.id}
+              task={task}
+              onEdit={() => {
+                setEditTaskId(task.id);
+                setShowAddTask(true);
+              }}
+              onDelete={handleDeleteTask}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
 };
 
-// export { tasks };
 export default App;
