@@ -4,6 +4,6 @@ export interface Task {
   title: string;
   category: string[];
   description: string;
-  deadline: string;
+  deadline: Date;
   priority: "low" | "medium" | "high";
 }

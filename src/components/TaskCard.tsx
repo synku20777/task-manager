@@ -8,6 +8,14 @@ interface Props {
   onDelete: (taskId: number) => void;
 }
 
+const beforeDeadline = (deadline: Date): string => {
+  const now = new Date();
+  const diffMs = deadline.getTime() - now.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  return diffDays >= 0 ? `${diffDays} days` : "overdue";
+};
+
 const priorityColors = {
   high: "red",
   medium: "orange",
@@ -28,7 +36,7 @@ const TaskCard: React.FC<Props> = ({ task, onEdit, onDelete }) => (
     <br />
     <span className="priority">{task.priority.toUpperCase()}</span>
     <p>{task.description}</p>
-    <span className="deadline">Due: {task.deadline}</span>
+    <span className="deadline">Due in: {beforeDeadline(task.deadline)}</span>
     <div className="actions">
       <button onClick={onEdit}>✏️</button>
       <button onClick={() => onDelete(task.id)}>🗑️</button>

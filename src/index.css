@@ -26,12 +26,14 @@ code {
 }
 
 .task-list {
+  padding-top: 1rem;
   display: flex;
   flex-direction: row;
   gap: 10px;
 }
 
 .task-card {
+  min-width: 400px;
   padding: 10px;
   border-left: 5px solid;
   border-radius: 8px;

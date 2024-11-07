@@ -12,7 +12,7 @@ const AddTaskForm: React.FC<Props> = ({ onSave, task, onCancel }) => {
   const [title, setTitle] = useState(task?.title || "");
   const [category, setCategory] = useState<string[]>(task?.category || []);
   const [description, setDescription] = useState(task?.description || "");
-  const [deadline, setDeadline] = useState(task?.deadline || "");
+  const [deadline, setDeadline] = useState<Date | null>(task?.deadline || null);
   const [priority, setPriority] = useState(task?.priority || "low");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -23,7 +23,7 @@ const AddTaskForm: React.FC<Props> = ({ onSave, task, onCancel }) => {
         title,
         category,
         description,
-        deadline,
+        deadline: deadline as Date,
         priority,
       });
     }
@@ -68,8 +68,8 @@ const AddTaskForm: React.FC<Props> = ({ onSave, task, onCancel }) => {
         <input
           id="deadline"
           type="date"
-          value={deadline}
-          onChange={(e) => setDeadline(e.target.value)}
+          value={deadline ? deadline.toISOString().split("T")[0] : ""}
+          onChange={(e) => setDeadline(new Date(e.target.value))}
           required
         />
         <label htmlFor="priority">Priority</label>

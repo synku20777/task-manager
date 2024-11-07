@@ -10,6 +10,8 @@ const App: React.FC = () => {
   const [showAddTask, setShowAddTask] = useState(false);
   const [editTaskId, setEditTaskId] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [filter, setFilter] = useState<string>("all");
 
   const handleAddTask = (newTask: Task) => {
     setTasks([...tasks, { ...newTask, id: Date.now() }]);
@@ -34,6 +36,16 @@ const App: React.FC = () => {
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setSelectedCategory(event.target.value);
+  };
+
+  const sortTasks = (tasks: Task[], sortOrder: "asc" | "desc") => {
+    return tasks.sort((a, b) => {
+      const dateA = new Date(a.deadline);
+      const dateB = new Date(b.deadline);
+      return sortOrder === "asc"
+        ? dateA.getTime() - dateB.getTime()
+        : dateB.getTime() - dateA.getTime();
+    });
   };
 
   const filteredTasks = selectedCategory
@@ -74,8 +86,17 @@ const App: React.FC = () => {
         </select>
       </div>
 
+      <div className="sort">
+        <button
+          className="sort-button"
+          onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+        >
+          {sortOrder === "asc" ? "Deadline Descending" : "Deadline Ascending"}
+        </button>
+      </div>
+
       <div className={`task-list ${showAddTask ? "blurred" : ""}`}>
-        {filteredTasks.map((task) => (
+        {sortTasks(filteredTasks, sortOrder).map((task) => (
           <TaskCard
             key={task.id}
             task={task}
