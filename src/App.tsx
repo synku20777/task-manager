@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Task } from "./types";
 import TaskCard from "./components/TaskCard";
 import AddTaskForm from "./components/AddTaskForm";
+import { Button } from "./components/ui/button";
 import "./index.css";
 
 const App: React.FC = () => {
@@ -96,6 +97,16 @@ const App: React.FC = () => {
       </div>
 
       <div className="sort">
+        <Button
+          variant="outline"
+          onClick={() =>
+            setsortPriority(sortPriority === "asc" ? "desc" : "asc")
+          }
+        >
+          {sortPriority === "asc"
+            ? "Priority Descending"
+            : "Priority Ascending"}
+        </Button>
         <button
           className="sort-button"
           onClick={() =>

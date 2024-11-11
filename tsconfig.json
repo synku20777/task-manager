@@ -4,7 +4,7 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["*"]
     },
     "allowJs": true,
     "skipLibCheck": true,
@@ -20,5 +20,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src"]
+  "include": ["src", "tsconfig.json", "tailwind.config.js", "src/lib"],
+  "exclude": ["node_modules", "build"]
 }
