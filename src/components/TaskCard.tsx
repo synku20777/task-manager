@@ -17,9 +17,9 @@ const beforeDeadline = (deadline: Date): string => {
 };
 
 const priorityColors = {
-  high: "red",
-  medium: "orange",
-  low: "yellow",
+  high: "#f5003e",
+  medium: "#f3c600",
+  low: "#00a837",
 };
 
 const TaskCard: React.FC<Props> = ({ task, onEdit, onDelete }) => (
