@@ -17,6 +17,6 @@
     "noEmit": true,
     "jsx": "preserve"
   },
-  "include": ["src", "tsconfig.json", "tailwind.config.js", "src/lib"],
+  "include": ["src", "tsconfig.json"],
   "exclude": ["node_modules", "build"]
 }
