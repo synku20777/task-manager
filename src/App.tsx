@@ -97,16 +97,6 @@ const App: React.FC = () => {
       </div>
 
       <div className="sort">
-        <Button
-          variant="outline"
-          onClick={() =>
-            setsortPriority(sortPriority === "asc" ? "desc" : "asc")
-          }
-        >
-          {sortPriority === "asc"
-            ? "Priority Descending"
-            : "Priority Ascending"}
-        </Button>
         <button
           className="sort-button"
           onClick={() =>
