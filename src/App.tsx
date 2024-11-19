@@ -12,7 +12,7 @@ const App: React.FC = () => {
   const [editTaskId, setEditTaskId] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [sortDate, setSortDate] = useState<"asc" | "desc">("asc");
-  const [sortPriority, setsortPriority] = useState<"asc" | "desc">("asc");
+  const [sortPriority, setSortPriority] = useState<"asc" | "desc">("asc");
 
   const handleAddTask = (newTask: Task) => {
     setTasks([...tasks, { ...newTask, id: Date.now() }]);
@@ -41,26 +41,56 @@ const App: React.FC = () => {
 
   const sortTasksByPriority = (tasks: Task[], sortPriority: "asc" | "desc") => {
     const priorityOrder = { low: 1, medium: 2, high: 3 };
-    return tasks.sort((a, b) => {
+    console.log(
+      "Before Priority Sort:",
+      tasks.map((t) => t.priority)
+    ); // Debug
+    const sorted = [...tasks].sort((a, b) => {
+      const priorityA =
+        priorityOrder[a.priority.toLowerCase() as keyof typeof priorityOrder] ||
+        0;
+      const priorityB =
+        priorityOrder[b.priority.toLowerCase() as keyof typeof priorityOrder] ||
+        0;
       return sortPriority === "asc"
-        ? priorityOrder[a.priority] - priorityOrder[b.priority]
-        : priorityOrder[b.priority] - priorityOrder[a.priority];
+        ? priorityA - priorityB
+        : priorityB - priorityA;
     });
+    console.log(
+      "After Priority Sort:",
+      sorted.map((t) => t.priority)
+    ); // Debug
+    return sorted;
   };
 
   const sortTasksByDeadline = (tasks: Task[], sortDate: "asc" | "desc") => {
-    return tasks.sort((a, b) => {
+    console.log(
+      "Before Deadline Sort:",
+      tasks.map((t) => t.deadline)
+    ); // Debug
+    const sorted = [...tasks].sort((a, b) => {
       const dateA = new Date(a.deadline);
       const dateB = new Date(b.deadline);
       return sortDate === "asc"
         ? dateA.getTime() - dateB.getTime()
         : dateB.getTime() - dateA.getTime();
     });
+    console.log(
+      "After Deadline Sort:",
+      sorted.map((t) => t.deadline)
+    ); // Debug
+    return sorted;
   };
 
   const filteredTasks = selectedCategory
     ? tasks.filter((task) => task.category.includes(selectedCategory))
     : tasks;
+
+  const sortedByPriority = sortTasksByPriority(filteredTasks, sortPriority);
+  const sortedAndFilteredTasks = sortTasksByDeadline(
+    sortedByPriority,
+    sortDate
+  );
 
   return (
     <div className="app">
@@ -97,10 +127,11 @@ const App: React.FC = () => {
       </div>
 
       <div className="sort">
+        {/* both sorts are activated together for some reason, pririty first and deadline second, so only the latest is shown */}
         <button
           className="sort-button"
           onClick={() =>
-            setsortPriority(sortPriority === "asc" ? "desc" : "asc")
+            setSortPriority(sortPriority === "asc" ? "desc" : "asc")
           }
         >
           {sortPriority === "asc"
@@ -113,23 +144,19 @@ const App: React.FC = () => {
         >
           {sortDate === "asc" ? "Deadline Descending" : "Deadline Ascending"}
         </button>
-
-        <div className={`task-list ${showAddTask ? "blurred" : ""}`}>
-          {sortTasksByDeadline(
-            sortTasksByPriority(filteredTasks, sortPriority),
-            sortDate
-          ).map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onEdit={() => {
-                setEditTaskId(task.id);
-                setShowAddTask(true);
-              }}
-              onDelete={handleDeleteTask}
-            />
-          ))}
-        </div>
+      </div>
+      <div className={`task-list ${showAddTask ? "blurred" : ""}`}>
+        {sortedAndFilteredTasks.map((task) => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            onEdit={() => {
+              setEditTaskId(task.id);
+              setShowAddTask(true);
+            }}
+            onDelete={handleDeleteTask}
+          />
+        ))}
       </div>
     </div>
   );
