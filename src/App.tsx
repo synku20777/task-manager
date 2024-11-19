@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Task } from "./types";
 import TaskCard from "./components/TaskCard";
 import AddTaskForm from "./components/AddTaskForm";
-import { Button } from "./components/ui/button";
 import "./index.css";
 
 const App: React.FC = () => {
