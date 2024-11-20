@@ -3,6 +3,11 @@ import React, { useState } from "react";
 import { Task } from "./types";
 import TaskCard from "./components/TaskCard";
 import AddTaskForm from "./components/AddTaskForm";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  DiffAddedIcon,
+} from "@primer/octicons-react";
 import "./index.css";
 
 const App: React.FC = () => {
@@ -11,7 +16,7 @@ const App: React.FC = () => {
   const [editTaskId, setEditTaskId] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [sortDate, setSortDate] = useState<"asc" | "desc">("asc");
-  const [sortPriority, setSortPriority] = useState<"asc" | "desc">("asc");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const handleAddTask = (newTask: Task) => {
     setTasks([...tasks, { ...newTask, id: Date.now() }]);
@@ -38,114 +43,101 @@ const App: React.FC = () => {
     setSelectedCategory(event.target.value);
   };
 
-  const sortTasksByPriority = (tasks: Task[], sortPriority: "asc" | "desc") => {
+  const sortTasksByPriority = (tasks: Task[], sortOrder: "asc" | "desc") => {
     const priorityOrder = { low: 1, medium: 2, high: 3 };
-    console.log(
-      "Before Priority Sort:",
-      tasks.map((t) => t.priority)
-    ); // Debug
-    const sorted = [...tasks].sort((a, b) => {
-      const priorityA =
-        priorityOrder[a.priority.toLowerCase() as keyof typeof priorityOrder] ||
-        0;
-      const priorityB =
-        priorityOrder[b.priority.toLowerCase() as keyof typeof priorityOrder] ||
-        0;
-      return sortPriority === "asc"
-        ? priorityA - priorityB
-        : priorityB - priorityA;
+    return tasks.sort((a, b) => {
+      return sortOrder === "asc"
+        ? priorityOrder[a.priority] - priorityOrder[b.priority]
+        : priorityOrder[b.priority] - priorityOrder[a.priority];
     });
-    console.log(
-      "After Priority Sort:",
-      sorted.map((t) => t.priority)
-    ); // Debug
-    return sorted;
   };
 
   const sortTasksByDeadline = (tasks: Task[], sortDate: "asc" | "desc") => {
-    console.log(
-      "Before Deadline Sort:",
-      tasks.map((t) => t.deadline)
-    ); // Debug
-    const sorted = [...tasks].sort((a, b) => {
+    return tasks.sort((a, b) => {
       const dateA = new Date(a.deadline);
       const dateB = new Date(b.deadline);
       return sortDate === "asc"
         ? dateA.getTime() - dateB.getTime()
         : dateB.getTime() - dateA.getTime();
     });
-    console.log(
-      "After Deadline Sort:",
-      sorted.map((t) => t.deadline)
-    ); // Debug
-    return sorted;
   };
 
   const filteredTasks = selectedCategory
     ? tasks.filter((task) => task.category.includes(selectedCategory))
     : tasks;
 
-  const sortedByPriority = sortTasksByPriority(filteredTasks, sortPriority);
-  const sortedAndFilteredTasks = sortTasksByDeadline(
-    sortedByPriority,
-    sortDate
-  );
-
   return (
     <div className="app">
-      <button
-        className="add-button"
-        onClick={() => setShowAddTask(!showAddTask)}
-      >
-        +
-      </button>
-
-      {showAddTask && (
-        <AddTaskForm
-          onSave={editTaskId ? handleEditTask : handleAddTask}
-          task={tasks.find((task) => task.id === editTaskId) || null}
-          onCancel={() => {
-            setShowAddTask(false);
-            setEditTaskId(null);
-          }}
-        />
-      )}
-
-      <div className="filter">
-        <label htmlFor="category">Filter by category:</label>
-        <select
-          id="category"
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-        >
-          <option value="">All</option>
-          <option value="work">Work</option>
-          <option value="personal">Personal</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
-
-      <div className="sort">
-        {/* both sorts are activated together for some reason, pririty first and deadline second, so only the latest is shown */}
+      <div className="head">
         <button
-          className="sort-button"
-          onClick={() =>
-            setSortPriority(sortPriority === "asc" ? "desc" : "asc")
-          }
+          className="add-button"
+          onClick={() => setShowAddTask(!showAddTask)}
         >
-          {sortPriority === "asc"
-            ? "Priority Descending"
-            : "Priority Ascending"}
+          <DiffAddedIcon /> Add task
         </button>
-        <button
-          className="sort-button"
-          onClick={() => setSortDate(sortDate === "asc" ? "desc" : "asc")}
-        >
-          {sortDate === "asc" ? "Deadline Descending" : "Deadline Ascending"}
-        </button>
+
+        {showAddTask && (
+          <AddTaskForm
+            onSave={editTaskId ? handleEditTask : handleAddTask}
+            task={tasks.find((task) => task.id === editTaskId) || null}
+            onCancel={() => {
+              setShowAddTask(false);
+              setEditTaskId(null);
+            }}
+          />
+        )}
+
+        <div className="filter">
+          <label htmlFor="category">Filter by category:</label>
+          <select
+            id="category"
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+          >
+            <option value="">All</option>
+            <option value="work">Work</option>
+            <option value="personal">Personal</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div className="sort">
+          <button
+            className="sort-button"
+            onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+          >
+            {sortOrder === "asc" ? (
+              <>
+                Priority <ChevronUpIcon />
+              </>
+            ) : (
+              <>
+                Priority <ChevronDownIcon />
+              </>
+            )}
+          </button>
+          <button
+            className="sort-button"
+            onClick={() => setSortDate(sortDate === "asc" ? "desc" : "asc")}
+          >
+            {sortDate === "asc" ? (
+              <>
+                Deadline <ChevronUpIcon />
+              </>
+            ) : (
+              <>
+                Deadline <ChevronDownIcon />
+              </>
+            )}
+          </button>
+        </div>
       </div>
       <div className={`task-list ${showAddTask ? "blurred" : ""}`}>
-        {sortedAndFilteredTasks.map((task) => (
+        {/* this sort application is hella silly, idk how this works better than whatever I wrote before but it does and it makes sense on preview but not in code */}
+        {sortTasksByDeadline(
+          sortTasksByPriority(filteredTasks, sortOrder),
+          sortDate
+        ).map((task) => (
           <TaskCard
             key={task.id}
             task={task}
