@@ -17,9 +17,9 @@ const beforeDeadline = (deadline: Date): string => {
 };
 
 const priorityColors = {
-  high: "#f5003e",
-  medium: "#f3c600",
-  low: "#00a837",
+  1: "#f5003e",
+  2: "#f3c600",
+  3: "#00a837",
 };
 
 const TaskCard: React.FC<Props> = ({ task, onEdit, onDelete }) => (
@@ -27,6 +27,7 @@ const TaskCard: React.FC<Props> = ({ task, onEdit, onDelete }) => (
     className="task-card"
     style={{ borderLeftColor: priorityColors[task.priority] }}
   >
+    <h2>{task.id}</h2>
     <h2>{task.title}</h2>
     {task.category.map((category, index) => (
       <div key={index} className="category">
@@ -34,7 +35,9 @@ const TaskCard: React.FC<Props> = ({ task, onEdit, onDelete }) => (
       </div>
     ))}
     <br />
-    <span className="priority">{task.priority.toUpperCase()}</span>
+    <span className="priority">
+      {task.priority === 1 ? "High" : task.priority === 2 ? "Medium" : "Low"}
+    </span>
     <p>{task.description}</p>
     <span className="deadline">Due in: {beforeDeadline(task.deadline)}</span>
     <div className="actions">

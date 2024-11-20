@@ -5,5 +5,5 @@ export interface Task {
   category: string[];
   description: string;
   deadline: Date;
-  priority: "low" | "medium" | "high";
+  priority: 1 | 2 | 3;
 }

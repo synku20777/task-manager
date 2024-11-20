@@ -1,4 +1,3 @@
-// src/components/AddTaskForm.tsx
 import React, { useState } from "react";
 import { Task } from "../types";
 
@@ -13,7 +12,16 @@ const AddTaskForm: React.FC<Props> = ({ onSave, task, onCancel }) => {
   const [category, setCategory] = useState<string[]>(task?.category || []);
   const [description, setDescription] = useState(task?.description || "");
   const [deadline, setDeadline] = useState<Date | null>(task?.deadline || null);
-  const [priority, setPriority] = useState(task?.priority || "low");
+  const [priority, setPriority] = useState<1 | 2 | 3>(task?.priority || 3);
+
+  const priorityOptions = [
+    { value: 3, label: "Low" },
+    { value: 2, label: "Medium" },
+    { value: 1, label: "High" },
+  ];
+
+  const priorityLabel =
+    priorityOptions.find((option) => option.value === priority)?.label || "Low";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +57,7 @@ const AddTaskForm: React.FC<Props> = ({ onSave, task, onCancel }) => {
               value={cat}
               onChange={(e) => {
                 const newCategory = [...category];
-                newCategory[index] = e.target.value;
+                newCategory[index] = e.target.value.toLowerCase();
                 setCategory(newCategory);
               }}
               required
@@ -75,14 +83,21 @@ const AddTaskForm: React.FC<Props> = ({ onSave, task, onCancel }) => {
         <label htmlFor="priority">Priority</label>
         <select
           id="priority"
-          value={priority}
-          onChange={(e) =>
-            setPriority(e.target.value as "low" | "medium" | "high")
-          }
+          value={priorityLabel}
+          onChange={(e) => {
+            const selectedPriority = priorityOptions.find(
+              (option) => option.label === e.target.value
+            )?.value;
+            if (selectedPriority !== undefined) {
+              setPriority(selectedPriority as 1 | 2 | 3);
+            }
+          }}
         >
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
+          {priorityOptions.map((option) => (
+            <option key={option.value} value={option.label}>
+              {option.label}
+            </option>
+          ))}
         </select>
         <button type="submit">{task ? "Save Changes" : "Add Task"}</button>
         <button type="button" onClick={onCancel}>
