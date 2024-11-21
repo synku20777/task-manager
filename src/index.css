@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: "articulat-cf", sans-serif;
@@ -48,6 +54,7 @@ button {
 
 .sort {
   width: 100%;
+  margin-top: 2rem;
   /* display: grid;
   grid-template-columns: 1fr 2fr 2fr 1fr 3fr 2fr 2fr; */
   gap: 0.5rem;
@@ -63,6 +70,10 @@ button {
   grid-template-columns: 1fr 2fr 2fr 1fr 3fr 2fr 2fr;
 }
 
+.sort thead {
+  width: 100%;
+}
+
 .sort-button {
   width: 100%;
   display: flex;
@@ -73,50 +84,42 @@ button {
 
 /* Grid system for task list */
 .task-list {
-  padding-top: 2rem;
+  /* padding-top: 2rem; */
   display: grid;
   grid-template-columns: 1fr 2fr 2fr 1fr 3fr 2fr 2fr;
   align-items: center;
+  justify-content: center;
   width: 100%;
+
 }
 
 .task-card {
   display: contents;
 }
 
-.task-card>h2:nth-of-type(1),
-/* ID */
-.task-card>h2:nth-of-type(2),
-/* Title */
-.task-card>.category,
-/* Category */
-.task-card>.priority,
-/* Priority */
-.task-card>p,
-/* Description */
-.task-card>.deadline,
-/* Due Date */
-.task-card>.actions {
-  text-align: center;
+.task-card>* {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.5rem;
-  font-size: 0.9rem;
-  border-bottom: 1px solid #ddd;
-  border-left: 1px solid #ddd;
-  background-color: whitesmoke;
+  height: 3rem;
+  font-size: 1rem;
+  background-color: white;
+  border-radius: 0.25rem;
+  margin-bottom: 0.125rem;
 }
 
-/* Align specific columns */
-.task-card>h2:nth-of-type(1) {
-  text-align: left;
-  /* ID column */
+.task-card>*:first-child {
+  border-left: 10px solid;
+  /* Adjust the color as needed */
 }
 
-
+.task-card>*:nth-child(2) {
+  font-weight: 600;
+}
 
 /* Actions column */
 .task-card>.actions {
-  display: flex;
-  justify-content: center;
   gap: 0.5rem;
 }
 

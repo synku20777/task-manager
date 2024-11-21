@@ -41,21 +41,25 @@ const TaskCard: React.FC<Props> = ({
   };
 
   return (
-    <div
-      className="task-card"
-      style={{ borderLeftColor: priorityColors[task.priority] }}
-    >
+    <div className="task-card">
       {/* <h2>{task.id}</h2> */}
-      <span className="status" onClick={changeTaskState}>
+      <div
+        style={{ borderLeftColor: priorityColors[task.priority] }}
+        className="status"
+        onClick={changeTaskState}
+      >
         {stateIcons[task.state]}
-      </span>
-      <h2>{task.title}</h2>
+      </div>
+      <div>{task.title}</div>
       <div className="category">{task.category.join(", ")}</div>
-      <span className="priority">
+      <span
+        className="priority"
+        style={{ color: priorityColors[task.priority] }}
+      >
         {task.priority === 1 ? "High" : task.priority === 2 ? "Medium" : "Low"}
       </span>
       <span className="deadline">Due in: {beforeDeadline(task.deadline)}</span>
-      <p>{task.description}</p>
+      <div>{task.description}</div>
       <div className="actions">
         <button id="edit-task" className="edit" onClick={onEdit}>
           ✏️
