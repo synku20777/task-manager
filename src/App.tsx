@@ -24,6 +24,13 @@ function sortData({
   if (!sortKey) return tableData;
 
   const sortedData = tableData.sort((a, b) => {
+    if (sortKey === "state") {
+      // Custom sorting for state: active tasks first, completed tasks last
+      if (a.state === "active" && b.state === "completed") return -1;
+      if (a.state === "completed" && b.state === "active") return 1;
+      return 0;
+    }
+
     if (a[sortKey] > b[sortKey]) return 1;
     if (a[sortKey] < b[sortKey]) return -1;
     return 0;
@@ -78,6 +85,7 @@ const App: React.FC = () => {
       deadline: new Date("2024-11-25"),
       category: ["work"],
       description: "Description for Task 1",
+      state: "completed",
     },
     {
       id: 2,
@@ -86,6 +94,7 @@ const App: React.FC = () => {
       deadline: new Date("2024-11-22"),
       category: ["personal"],
       description: "Description for Task 2",
+      state: "completed",
     },
     {
       id: 3,
@@ -94,6 +103,7 @@ const App: React.FC = () => {
       deadline: new Date("2024-11-30"),
       category: ["other"],
       description: "Description for Task 3",
+      state: "active",
     },
     {
       title: "Task 4",
@@ -102,6 +112,7 @@ const App: React.FC = () => {
       category: ["work"],
       description: "Description for Task 4",
       id: 4,
+      state: "active",
     },
     {
       title: "Task 5",
@@ -110,6 +121,7 @@ const App: React.FC = () => {
       category: ["personal"],
       description: "Description for Task 5",
       id: 5,
+      state: "active",
     },
   ]);
   const [showAddTask, setShowAddTask] = useState(false);
@@ -118,6 +130,7 @@ const App: React.FC = () => {
   const [sortKey, setSortKey] = useState<SortKeys>("deadline");
   const [sortOrders, setSortOrders] = useState<Record<SortKeys, SortOrder>>({
     id: "asc",
+    state: "asc",
     title: "asc",
     category: "asc",
     priority: "asc",
@@ -184,6 +197,7 @@ const App: React.FC = () => {
     { key: "category", label: "Category" },
     { key: "priority", label: "Priority" },
     { key: "deadline", label: "Deadline" },
+    { key: "state", label: "State" }, // Add state to headers
   ];
 
   return (
@@ -215,9 +229,13 @@ const App: React.FC = () => {
             onChange={handleCategoryChange}
           >
             <option value="">All</option>
-            <option value="work">Work</option>
-            <option value="personal">Personal</option>
-            <option value="other">Other</option>
+            {Array.from(new Set(tasks.flatMap((task) => task.category))).map(
+              (category, index) => (
+                <option key={index} value={category.toLowerCase()}>
+                  {category}
+                </option>
+              )
+            )}
           </select>
         </div>
 
