@@ -28,6 +28,7 @@ const AddTaskForm: React.FC<Props> = ({ onSave, task, onCancel }) => {
     if (title.trim() && deadline) {
       onSave({
         id: task?.id || Date.now(),
+        state: task?.state || "active",
         title,
         category,
         description,

@@ -37,11 +37,16 @@ const TaskCard: React.FC<Props> = ({ task, onEdit, onDelete }) => (
     </span>
     <p>{task.description}</p>
     <span className="deadline">Due in: {beforeDeadline(task.deadline)}</span>
+    <span className="status">{task.state}</span>
     <div className="actions">
-      <button className="edit" onClick={onEdit}>
+      <button id="edit-task" className="edit" onClick={onEdit}>
         ✏️
       </button>
-      <button className="destroy" onClick={() => onDelete(task.id)}>
+      <button
+        id="delete-task"
+        className="destroy"
+        onClick={() => onDelete(task.id)}
+      >
         🗑️
       </button>
     </div>
