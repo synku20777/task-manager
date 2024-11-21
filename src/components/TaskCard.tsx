@@ -29,12 +29,9 @@ const TaskCard: React.FC<Props> = ({ task, onEdit, onDelete }) => (
   >
     <h2>{task.id}</h2>
     <h2>{task.title}</h2>
-    {task.category.map((category, index) => (
-      <div key={index} className="category">
-        <h4>{category} </h4>
-      </div>
-    ))}
-    <br />
+    <div className="category">
+      {task.category.join(", ")}
+    </div>
     <span className="priority">
       {task.priority === 1 ? "High" : task.priority === 2 ? "Medium" : "Low"}
     </span>
@@ -50,5 +47,6 @@ const TaskCard: React.FC<Props> = ({ task, onEdit, onDelete }) => (
     </div>
   </div>
 );
+
 
 export default TaskCard;
