@@ -6,6 +6,8 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   DiffAddedIcon,
+  CircleIcon,
+  IssueClosedIcon,
 } from "@primer/octicons-react";
 import "./index.css";
 
@@ -41,39 +43,6 @@ function sortData({
   }
 
   return sortedData;
-}
-
-function SortButton({
-  sortOrder,
-  columnKey,
-  sortKey,
-  onClick,
-}: {
-  sortOrder: SortOrder;
-  columnKey: SortKeys;
-  sortKey: SortKeys;
-  onClick: MouseEventHandler<HTMLButtonElement>;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`${
-        sortKey === columnKey && sortOrder === "desc"
-          ? "sort-button sort-reverse"
-          : "sort-button"
-      }`}
-    >
-      {sortOrder === "asc" ? (
-        <>
-          <ChevronUpIcon />
-        </>
-      ) : (
-        <>
-          <ChevronDownIcon />
-        </>
-      )}
-    </button>
-  );
 }
 
 const App: React.FC = () => {
@@ -124,6 +93,7 @@ const App: React.FC = () => {
       state: "active",
     },
   ]);
+
   const [showAddTask, setShowAddTask] = useState(false);
   const [editTaskId, setEditTaskId] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -138,6 +108,51 @@ const App: React.FC = () => {
     description: "asc",
   });
 
+  const headers: { key: SortKeys; label: string }[] = [
+    { key: "state", label: "State" }, // Add state to headers
+    { key: "title", label: "Title" },
+    { key: "category", label: "Category" },
+    { key: "priority", label: "Priority" },
+    { key: "deadline", label: "Deadline" },
+  ];
+
+  function SortButton({
+    sortOrder,
+    columnKey,
+    sortKey,
+    onClick,
+    label,
+  }: {
+    sortOrder: SortOrder;
+    columnKey: SortKeys;
+    sortKey: SortKeys;
+    onClick: MouseEventHandler<HTMLButtonElement>;
+    label: string;
+  }) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className={`${
+          sortKey === columnKey && sortOrder === "desc"
+            ? "sort-button sort-reverse"
+            : "sort-button"
+        } `}
+      >
+        {label}
+        {sortOrder === "asc" ? (
+          <>
+            <ChevronUpIcon />
+          </>
+        ) : (
+          <>
+            <ChevronDownIcon />
+          </>
+        )}
+      </button>
+    );
+  }
+
   const handleAddTask = (newTask: Task) => {
     setTasks([...tasks, { ...newTask, id: Date.now() }]);
     setShowAddTask(false);
@@ -149,6 +164,17 @@ const App: React.FC = () => {
     );
     setEditTaskId(null);
     setShowAddTask(false);
+  };
+
+  const handleStateChange = (
+    taskId: number,
+    newState: "active" | "completed"
+  ) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, state: newState } : task
+      )
+    );
   };
 
   const handleDeleteTask = (taskId: number) => {
@@ -191,15 +217,6 @@ const App: React.FC = () => {
     [filteredTasks, sortKey, sortOrders]
   );
 
-  const headers: { key: SortKeys; label: string }[] = [
-    { key: "id", label: "ID" },
-    { key: "title", label: "Title" },
-    { key: "category", label: "Category" },
-    { key: "priority", label: "Priority" },
-    { key: "deadline", label: "Deadline" },
-    { key: "state", label: "State" }, // Add state to headers
-  ];
-
   return (
     <div className="app">
       <div className="head">
@@ -238,29 +255,28 @@ const App: React.FC = () => {
             )}
           </select>
         </div>
-
-        <div className="sort"></div>
+        <div className="sort">
+          <table>
+            <thead>
+              <tr>
+                {headers.map((row) => {
+                  return (
+                    <td key={row.key}>
+                      <SortButton
+                        columnKey={row.key}
+                        onClick={() => changeSort(row.key)}
+                        sortOrder={sortOrders[row.key]}
+                        sortKey={sortKey}
+                        label={row.label}
+                      ></SortButton>
+                    </td>
+                  );
+                })}
+              </tr>
+            </thead>
+          </table>
+        </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            {headers.map((row) => {
-              return (
-                <td key={row.key}>
-                  {row.label}
-                  {""}
-                  <SortButton
-                    columnKey={row.key}
-                    onClick={() => changeSort(row.key)}
-                    sortOrder={sortOrders[row.key]}
-                    sortKey={sortKey}
-                  />
-                </td>
-              );
-            })}
-          </tr>
-        </thead>
-      </table>
       <div className={`task-list ${showAddTask ? "blurred" : ""}`}>
         {sortedTasks().map((task) => (
           <TaskCard
@@ -271,6 +287,7 @@ const App: React.FC = () => {
               setShowAddTask(true);
             }}
             onDelete={handleDeleteTask}
+            onStateChange={handleStateChange}
           />
         ))}
       </div>
