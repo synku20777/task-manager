@@ -6,8 +6,6 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   DiffAddedIcon,
-  CircleIcon,
-  IssueClosedIcon,
 } from "@primer/octicons-react";
 import "./index.css";
 
